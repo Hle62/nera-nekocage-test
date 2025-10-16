@@ -344,7 +344,7 @@ function updateSaleTotalDisplay() {
     if (totalCoupons > 0) {
         htmlContent += `
             <div class="coupon-row">
-                <span class="label">付与クーポン券枚数</span>
+                <span class="label">クーポン券枚数</span>
                 <span class="value coupon-value">${totalCoupons.toLocaleString()} 枚</span>
             </div>
         `;
