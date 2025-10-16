@@ -291,7 +291,7 @@ function resetSingleQuantity(inputId, type) {
     }
 }
 
-// ★★★ 修正: クーポン計算ロジックを変更（AND条件） ★★★
+// ★★★ 修正: クーポン計算ロジックをAND条件に変更 ★★★
 function updateSaleTotalDisplay() {
     const totalDisplay = document.getElementById('sale-total-display');
     const saleQtyInputs = document.querySelectorAll('input[id^="qty-sale-"]'); 
@@ -331,6 +331,8 @@ function updateSaleTotalDisplay() {
 
     // ★修正: クーポン枚数の計算 (食べ物、飲み物、ジョイントの最小値/10)
     const minQty = Math.min(foodQty, drinkQty, jointQty);
+    
+    // 最小値を10で割って、セットが成立した回数を算出
     const totalCoupons = Math.floor(minQty / 10);
     
     
