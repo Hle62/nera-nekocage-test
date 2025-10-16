@@ -210,12 +210,10 @@ function renderItemLists() {
                     controls.style.display = 'block';
                     if (card) card.classList.add('is-checked'); 
                     
-                    // ★修正: 販売記録でも、チェック時に自動で1を設定するロジックを削除
+                    // ★修正: チェック時の自動 '1' 設定を削除
                     const input = document.getElementById(`qty-${idPrefix}-${productId}`);
                     // 販売記録の場合、チェック時に自動で1をセットするロジックを削除
-                    // if (idPrefix === 'sale' && input && (parseInt(input.value) === 0 || input.value === '0')) {
-                    //     input.value = 1; 
-                    // }
+                    // if (idPrefix === 'sale' && input && (parseInt(input.value) === 0 || input.value === '0')) { input.value = 1; }
                     
                 } else {
                     controls.style.display = 'none';
@@ -256,9 +254,7 @@ function updateQuantity(inputId, value, type) {
     }
     
     // ★修正: 販売記録でも、ボタン操作で1より小さくならないようにする制約を削除
-    // if (type === 'sale' && newValue === 0 && currentValue > 0) {
-    //     newValue = 1; 
-    // }
+    // if (type === 'sale' && newValue === 0 && currentValue > 0) { newValue = 1; }
     
     input.value = newValue;
     
@@ -585,7 +581,7 @@ async function submitData(event, type) {
         }
         
         // フォーム送信前にLocalStorageをクリアし、画面をリセット
-        const items = form.querySelectorAll('input[name$="_item"]:checked');
+        const items = form.querySelectorAll('input[name$="_item"]'); // チェックされていない項目も含む
         items.forEach(item => {
             item.checked = false; 
             const parts = item.id.split('-');
@@ -594,7 +590,7 @@ async function submitData(event, type) {
             
             const controls = document.getElementById(`${idPrefix}-qty-controls-${productId}`);
             if (controls) {
-                controls.style.display = 'none'; 
+                controls.style.display = 'none'; // 数量入力欄全体を非表示にする
             }
             const input = document.getElementById(`qty-${idPrefix}-${productId}`);
             if (input) input.value = 0; 
@@ -628,9 +624,25 @@ async function submitData(event, type) {
         if (result.result === 'success') {
             alert(`${type}のデータ ${records.length} 件が正常に送信され、Discordに通知されました！`);
             
-            // 成功時、フォームをリセット
-            if (type === '在庫補充' || type === '販売記録') {
-                // 販売記録のフォームリセットは既に上で実行済み
+            // ★修正箇所: 在庫補充送信成功後のリセット処理
+            if (type === '在庫補充') {
+                const items = form.querySelectorAll('input[name$="_item"]'); 
+                items.forEach(item => {
+                    item.checked = false; 
+                    const parts = item.id.split('-');
+                    const idPrefix = parts[0]; 
+                    const productId = parts.slice(1).join('-'); 
+                    
+                    const controls = document.getElementById(`${idPrefix}-qty-controls-${productId}`);
+                    if (controls) {
+                        controls.style.display = 'none'; // 数量入力欄全体を非表示にする
+                    }
+                    const input = document.getElementById(`qty-${idPrefix}-${productId}`);
+                    if (input) input.value = 0; 
+
+                    const card = item.closest('.item-card');
+                    if (card) card.classList.remove('is-checked');
+                });
             }
             
             form.reset();
