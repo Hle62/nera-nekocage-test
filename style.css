@@ -191,13 +191,13 @@ button:hover {
 
 
 /* ========================================================== */
-/* ★★★ グリッドレイアウト用CSS (PCとスマホで分岐) ★★★ */
+/* ★★★ グリッドレイアウト用CSS (メディアクエリを削除) ★★★ */
 /* ========================================================== */
 
-/* デフォルト設定 (PC向け - 180px以上を維持し、スマホ幅では自動で1列になる) */
+/* デフォルト設定 (PC向け - 180px以上を維持) */
 .item-grid {
     display: grid;
-    /* PCでは 180px 以上を維持 */
+    /* 最小幅を180pxに戻す (スマホで1列表示になる原因ですが、元の状態に戻します) */
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
     gap: 15px; 
     margin-top: 10px;
@@ -221,16 +221,6 @@ button:hover {
     justify-content: flex-start; 
     text-align: center; 
 }
-
-/* --- メディアクエリ: 画面幅 600px以下 (スマートフォン) --- */
-@media (max-width: 600px) {
-    /* ★修正: スマホでのみ最小幅を140pxに設定し、2列表示を維持 */
-    .item-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
-    }
-}
-/* --- ここまでメディアクエリ --- */
-
 
 /* チェックされた商品カードの視覚的強調 */
 .item-card.is-checked {
