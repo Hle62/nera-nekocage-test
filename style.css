@@ -202,21 +202,27 @@ button:hover {
 /* ★修正: チェックボックスと名前を一行に（中央配置） */
 .item-checkbox-row {
     display: flex;
-    align-items: center;
-    justify-content: center; /* コンテンツ全体を中央揃え */
+    /* ★修正: 垂直方向の中央揃えを確実に適用 */
+    align-items: center; 
+    /* ★修正: 水平方向の中央揃え */
+    justify-content: center; 
     margin-bottom: 5px;
 }
 .item-checkbox-row input[type="checkbox"] {
     transform: scale(1.2); 
     margin-right: 10px;
     flex-shrink: 0; 
+    /* ★追加: 垂直方向の中央揃えを確実にするために余白をリセット */
+    margin-top: 0;
+    margin-bottom: 0;
 }
 .item-name-label {
-    /* flex-grow: 1; を削除 */
     font-weight: bold !important; 
     color: #4F3F3F !important;
     line-height: 1.2;
     margin: 0; /* ラベルの余白をリセット */
+    /* ★追加: Flexアイテムとして垂直中央を確保するため、padding/marginをリセット */
+    padding: 0;
 }
 
 /* 商品ごとの価格表示は非表示 */
