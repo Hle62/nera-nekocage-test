@@ -188,7 +188,7 @@ button:hover {
     border: 1px solid #FFE8F0;
     transition: box-shadow 0.2s, border-color 0.2s, background-color 0.2s;
     cursor: pointer;
-    /* ★修正: カード内のテキストを中央揃えに */
+    /* カード内のテキストを中央揃えに */
     text-align: center; 
 }
 
@@ -202,9 +202,9 @@ button:hover {
 /* ★修正: チェックボックスと名前を一行に（中央配置） */
 .item-checkbox-row {
     display: flex;
-    /* ★修正: 垂直方向の中央揃えを確実に適用 */
+    /* 垂直方向の中央揃えを確実に適用 */
     align-items: center; 
-    /* ★修正: 水平方向の中央揃え */
+    /* 水平方向の中央揃え */
     justify-content: center; 
     margin-bottom: 5px;
 }
@@ -212,7 +212,8 @@ button:hover {
     transform: scale(1.2); 
     margin-right: 10px;
     flex-shrink: 0; 
-    /* ★追加: 垂直方向の中央揃えを確実にするために余白をリセット */
+    /* ★追加: 垂直方向の中央揃えを確実にするためのプロパティ */
+    vertical-align: middle; 
     margin-top: 0;
     margin-bottom: 0;
 }
@@ -221,7 +222,6 @@ button:hover {
     color: #4F3F3F !important;
     line-height: 1.2;
     margin: 0; /* ラベルの余白をリセット */
-    /* ★追加: Flexアイテムとして垂直中央を確保するため、padding/marginをリセット */
     padding: 0;
 }
 
