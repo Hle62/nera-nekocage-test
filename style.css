@@ -199,7 +199,7 @@ button:hover {
     background-color: #FFF9FC; /* やや薄い背景色 */
 }
 
-/* ★修正: チェックボックスと名前を一行に（中央配置） */
+/* ★最終調整: チェックボックスと名前を一行に（中央配置） */
 .item-checkbox-row {
     display: flex;
     /* 垂直方向の中央揃えを確実に適用 */
@@ -207,12 +207,12 @@ button:hover {
     /* 水平方向の中央揃え */
     justify-content: center; 
     margin-bottom: 5px;
+    height: 1.2em; /* 行の高さを固定して、より安定させる */
 }
 .item-checkbox-row input[type="checkbox"] {
     transform: scale(1.2); 
     margin-right: 10px;
     flex-shrink: 0; 
-    /* ★追加: 垂直方向の中央揃えを確実にするためのプロパティ */
     vertical-align: middle; 
     margin-top: 0;
     margin-bottom: 0;
@@ -220,9 +220,13 @@ button:hover {
 .item-name-label {
     font-weight: bold !important; 
     color: #4F3F3F !important;
+    /* ★追加: ラベルをFlexboxの子要素として扱い、ベースラインのずれを無視させる */
+    display: inline-flex; 
+    align-items: center;
     line-height: 1.2;
-    margin: 0; /* ラベルの余白をリセット */
+    margin: 0; 
     padding: 0;
+    height: 100%; /* 親の高さに合わせる */
 }
 
 /* 商品ごとの価格表示は非表示 */
