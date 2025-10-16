@@ -151,7 +151,7 @@ button:hover {
     background-color: #8C7C7C;
 }
 
-/* ★★★ 修正: 合計金額とクーポンを統合表示するデザイン ★★★ */
+/* ★★★ 合計金額とクーポンを統合表示するデザイン ★★★ */
 #sale-total-display {
     /* Flexboxコンテナとして設定し、子要素を縦に並べる */
     display: flex; 
@@ -188,22 +188,21 @@ button:hover {
     color: #4B0082; /* クーポン枚数を強調 */
     font-size: 1.1em;
 }
-/* ★★★ 修正ここまで ★★★ */
 
 
 /* ========================================================== */
-/* ★★★ グリッドレイアウト用CSS ★★★ */
+/* ★★★ グリッドレイアウト用CSS (PCとスマホで分岐) ★★★ */
 /* ========================================================== */
 
-/* グリッドコンテナ */
+/* デフォルト設定 (PC向け - 詰めて表示) */
 .item-grid {
     display: grid;
+    /* PCでは広い最小幅を設定し、極端に多くの列にならないようにする (元の180pxに戻す) */
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
     gap: 15px; 
     margin-top: 10px;
     margin-bottom: 30px; 
     
-    /* 修正: グリッド内のアイテムが均等な高さに引き伸ばされるのを防ぐ */
     align-items: start; 
 }
 
@@ -222,6 +221,16 @@ button:hover {
     justify-content: flex-start; 
     text-align: center; 
 }
+
+/* --- メディアクエリ: 画面幅 600px以下 (スマートフォン) --- */
+@media (max-width: 600px) {
+    /* ★修正: スマホでのみ最小幅を140pxに設定し、2列表示を維持 */
+    .item-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+    }
+}
+/* --- ここまでメディアクエリ --- */
+
 
 /* チェックされた商品カードの視覚的強調 */
 .item-card.is-checked {
