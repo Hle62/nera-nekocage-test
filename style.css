@@ -128,7 +128,7 @@ button:hover {
 /* --- 認証情報エリア --- */
 #auth-info {
     display: flex; 
-    justify-content: space-between; 
+    justify-content: space-between;
     align-items: center; 
     font-size: 0.9em;
     color: #4F3F3F; 
@@ -164,6 +164,23 @@ button:hover {
     background-color: #FFF9FC;
 }
 
+/* ★★★ 追加: クーポン表示デザイン ★★★ */
+#coupon-display {
+    font-size: 1.2em; 
+    font-weight: bold;
+    color: #2E8B57; /* 緑系 */
+    margin: 10px 0 20px 0;
+    padding: 8px;
+    border: 2px solid #2E8B57; 
+    border-radius: 8px;
+    text-align: center;
+    background-color: #E6FFE6; /* 薄い緑背景 */
+}
+#coupon-display #current-coupons {
+    color: #4B0082; /* 紫 */
+    font-size: 1.1em;
+}
+
 
 /* ========================================================== */
 /* ★★★ グリッドレイアウト用CSS ★★★ */
@@ -177,7 +194,7 @@ button:hover {
     margin-top: 10px;
     margin-bottom: 30px; 
     
-    /* ★修正: グリッド内のアイテムが均等な高さに引き伸ばされるのを防ぐ */
+    /* 修正: グリッド内のアイテムが均等な高さに引き伸ばされるのを防ぐ */
     align-items: start; 
 }
 
@@ -191,10 +208,9 @@ button:hover {
     transition: box-shadow 0.2s, border-color 0.2s, background-color 0.2s;
     cursor: pointer;
     
-    /* min-height は削除 (コンテンツの高さに合わせる) */
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* 上端揃えに戻す (align-items: start; で制御されるため) */
+    justify-content: flex-start; 
     text-align: center; 
 }
 
@@ -236,7 +252,7 @@ button:hover {
 }
 
 
-/* 数量コントロール (カード内に収まるように調整し、カードの高さが変わるのを防ぐ) */
+/* 数量コントロールがカード内に収まるように調整し、カードの高さが変わるのを防ぐ */
 .item-card .quantity-controls {
     margin-top: 5px !important;
     padding-top: 5px;

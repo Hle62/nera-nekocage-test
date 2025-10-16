@@ -211,6 +211,11 @@ function renderItemLists() {
                     if (card) card.classList.add('is-checked'); 
                     
                     // ★修正: チェック時の自動 '1' 設定を削除
+                    const input = document.getElementById(`qty-${idPrefix}-${productId}`);
+                    if (idPrefix === 'sale' && input && (parseInt(input.value) === 0 || input.value === '0')) {
+                        input.value = 1; // 販売記録は最小値1を設定
+                    }
+                    
                 } else {
                     controls.style.display = 'none';
                     if (card) card.classList.remove('is-checked');
@@ -249,6 +254,11 @@ function updateQuantity(inputId, value, type) {
         newValue = 0;
     }
     
+    // 販売記録は最小値1をチェック (ボタン操作時)
+    if (type === 'sale' && newValue === 0 && currentValue > 0) {
+        newValue = 1; // 1より小さくならないように
+    }
+    
     input.value = newValue;
     
     // イベントを手動で発火させ、リアルタイム計算をトリガー
@@ -261,34 +271,36 @@ function updateQuantity(inputId, value, type) {
 // 個別リセット関数
 function resetSingleQuantity(inputId, type) {
     const input = document.getElementById(inputId);
-    if (input) {
-        input.value = 0;
-    }
     
-    // イベントを手動で発火させる
+    // 販売記録で0にリセットする場合、チェックは残す
     if (type === 'sale') {
+        input.value = 0;
         const event = new Event('change');
         input.dispatchEvent(event);
-    }
-    
-    // 数量が0になったら、チェックボックスを外す
-    const parts = inputId.split('-');
-    const idPrefix = parts[1]; 
-    const productId = parts.slice(2).join('-');
-    const checkbox = document.getElementById(`${idPrefix}-${productId}`);
-    if (checkbox) {
-        checkbox.checked = false;
-        // チェックを外すと、changeイベントが発火し、コントロール非表示とカード強調解除が実行される
-        const changeEvent = new Event('change');
-        checkbox.dispatchEvent(changeEvent);
+    } else {
+        input.value = 0;
+        const parts = inputId.split('-');
+        const idPrefix = parts[1]; 
+        const productId = parts.slice(2).join('-');
+        const checkbox = document.getElementById(`${idPrefix}-${productId}`);
+        if (checkbox) {
+            checkbox.checked = false;
+            const changeEvent = new Event('change');
+            checkbox.dispatchEvent(changeEvent);
+        }
     }
 }
 
-// 販売記録の合計金額をリアルタイムで更新する関数
+// 販売記録の合計金額とクーポンの計算/表示
 function updateSaleTotalDisplay() {
     const totalDisplay = document.getElementById('sale-total-display');
     const saleQtyInputs = document.querySelectorAll('input[id^="qty-sale-"]'); 
     let totalSales = 0;
+    
+    // ★クーポン計算用変数
+    let foodQty = 0;
+    let drinkQty = 0;
+    let jointQty = 0;
     
     saleQtyInputs.forEach(input => {
         const quantity = parseInt(input.value) || 0;
@@ -300,13 +312,44 @@ function updateSaleTotalDisplay() {
         if (checkbox && checkbox.checked && quantity > 0) {
             // チェックボックスのデータ属性から価格を取得
             const unitPrice = parseFloat(checkbox.dataset.price);
+            const card = checkbox.closest('.item-card');
+            const category = card ? card.getAttribute('data-category') : null;
+
             if (!isNaN(unitPrice)) {
                 totalSales += quantity * unitPrice;
+            }
+            
+            // ★カテゴリごとの数量を合算 (クーポン対象カテゴリのみ)
+            if (category === '食べ物') {
+                foodQty += quantity;
+            } else if (category === '飲み物') {
+                drinkQty += quantity;
+            } else if (category === 'ジョイント') {
+                jointQty += quantity;
             }
         }
     });
 
+    // ★クーポン枚数の計算 (10個ごとに1枚)
+    const foodCoupons = Math.floor(foodQty / 10);
+    const drinkCoupons = Math.floor(drinkQty / 10);
+    const jointCoupons = Math.floor(jointQty / 10);
+    const totalCoupons = foodCoupons + drinkCoupons + jointCoupons;
+    
+    // 合計金額の表示を更新
     totalDisplay.textContent = `合計金額 ¥${totalSales.toLocaleString()}`;
+
+    // ★クーポン表示の更新
+    const couponDisplayEl = document.getElementById('coupon-display');
+    const currentCouponsEl = document.getElementById('current-coupons');
+    
+    currentCouponsEl.textContent = totalCoupons.toLocaleString();
+    
+    if (totalCoupons > 0) {
+        couponDisplayEl.style.display = 'block';
+    } else {
+        couponDisplayEl.style.display = 'none';
+    }
 }
 
 
@@ -535,6 +578,27 @@ async function submitData(event, type) {
             }
             throw e;
         }
+        
+        // フォーム送信前にLocalStorageをクリアし、画面をリセット
+        const items = form.querySelectorAll('input[name$="_item"]:checked');
+        items.forEach(item => {
+            item.checked = false; 
+            const parts = item.id.split('-');
+            const idPrefix = parts[0]; 
+            const productId = parts.slice(1).join('-'); 
+            
+            const controls = document.getElementById(`${idPrefix}-qty-controls-${productId}`);
+            if (controls) {
+                controls.style.display = 'none'; 
+            }
+            const input = document.getElementById(`qty-${idPrefix}-${productId}`);
+            if (input) input.value = 0; 
+
+            const card = item.closest('.item-card');
+            if (card) card.classList.remove('is-checked');
+        });
+        form.reset();
+        updateSaleTotalDisplay(); // 表示もリセット
     } else {
         alert('無効なフォームです。');
         submitButton.textContent = originalButtonText;
@@ -559,28 +623,9 @@ async function submitData(event, type) {
         if (result.result === 'success') {
             alert(`${type}のデータ ${records.length} 件が正常に送信され、Discordに通知されました！`);
             
+            // 成功時、フォームをリセット
             if (type === '在庫補充' || type === '販売記録') {
-                const items = form.querySelectorAll('input[name$="_item"]:checked');
-                items.forEach(item => {
-                    item.checked = false; 
-                    const parts = item.id.split('-');
-                    const idPrefix = parts[0]; 
-                    const productId = parts.slice(1).join('-'); 
-                    
-                    const controls = document.getElementById(`${idPrefix}-qty-controls-${productId}`);
-                    if (controls) {
-                        controls.style.display = 'none'; 
-                    }
-                    const input = document.getElementById(`qty-${idPrefix}-${productId}`);
-                    if (input) input.value = 0; 
-
-                    const card = item.closest('.item-card');
-                    if (card) card.classList.remove('is-checked');
-                });
-                
-                if (type === '販売記録') {
-                    updateSaleTotalDisplay();
-                }
+                // 販売記録のフォームリセットは既に上で実行済み
             }
             
             form.reset();
