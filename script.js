@@ -91,7 +91,8 @@ async function fetchProductData() {
                  productList[categoryName] = fullProductListByCategory[categoryName].map(p => ({
                     category: p.category,
                     name: p.name,
-                    price: p.price,
+                    // ★変更なし: 統一価格がpriceに入っている（GASで処理済み）
+                    price: p.price, 
                     id: `item-${idCounter++}` 
                 }));
             }
@@ -109,7 +110,7 @@ async function fetchProductData() {
     }
 }
 
-// ★変更: チェックボックスと数量フィールドをカテゴリごとに生成する関数
+// ★★★ 変更: カテゴリヘッダーに価格を表示し、商品ごとの価格表示を削除 ★★★
 function renderItemLists() {
     const stockListDiv = document.getElementById('stock-item-list');
     const saleListDiv = document.getElementById('sale-item-list');
@@ -123,8 +124,12 @@ function renderItemLists() {
         const products = productList[category];
         if (products.length === 0) return; // 商品がないカテゴリはスキップ
 
-        // カテゴリヘッダーを追加
-        const categoryHeaderHtml = `<h3 class="category-header">${category}</h3>`;
+        // そのカテゴリの統一価格を取得
+        const unifiedPrice = products[0].price; 
+        const priceDisplay = unifiedPrice > 0 ? `<span class="category-price"> (¥${unifiedPrice.toLocaleString()})</span>` : '';
+
+        // カテゴリヘッダーに価格を含める
+        const categoryHeaderHtml = `<h3 class="category-header">${category}${priceDisplay}</h3>`;
         stockListDiv.insertAdjacentHTML('beforeend', categoryHeaderHtml);
         saleListDiv.insertAdjacentHTML('beforeend', categoryHeaderHtml);
 
@@ -141,7 +146,7 @@ function renderItemLists() {
         products.forEach(product => {
             const productId = product.id;
             
-            // 1. 在庫補充リスト (stock)
+            // 1. 在庫補充リスト (stock) - 商品ごとの価格表示はなし
             const stockHtml = `
                 <div class="item-card" data-type="stock" data-id="${productId}">
                     <div class="item-checkbox-row">
@@ -163,15 +168,13 @@ function renderItemLists() {
             `;
             stockGridDiv.insertAdjacentHTML('beforeend', stockHtml);
             
-            // 2. 販売記録リスト (sale)
+            // 2. 販売記録リスト (sale) - 商品ごとの価格表示を削除
             const saleHtml = `
                 <div class="item-card" data-type="sale" data-id="${productId}">
                     <div class="item-checkbox-row">
                         <input type="checkbox" id="sale-${productId}" name="sale_item" value="${product.name}" data-price="${product.price}">
                         <label for="sale-${productId}" class="item-name-label">${product.name}</label>
                     </div>
-                    <div class="item-price">¥${product.price.toLocaleString()}</div> 
-                    
                     <div id="sale-qty-controls-${productId}" class="quantity-controls" style="display: none;">
                         <label for="qty-sale-${productId}" style="margin-top: 5px;">数量</label>
                         <input type="number" id="qty-sale-${productId}" min="0" value="0" data-item-id="${productId}">
@@ -234,7 +237,7 @@ function renderItemLists() {
 
     updateSaleTotalDisplay();
 }
-// ★変更ここまで
+// ★★★ 変更ここまで ★★★
 
 // 数量ボタンの処理関数
 function updateQuantity(inputId, value, type) {
