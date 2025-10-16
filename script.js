@@ -211,7 +211,11 @@ function renderItemLists() {
                     if (card) card.classList.add('is-checked'); 
                     
                     // ★修正: 販売記録でも、チェック時に自動で1を設定するロジックを削除
-                    // 数量は0のまま維持されます
+                    const input = document.getElementById(`qty-${idPrefix}-${productId}`);
+                    // 販売記録の場合、チェック時に自動で1をセットするロジックを削除
+                    // if (idPrefix === 'sale' && input && (parseInt(input.value) === 0 || input.value === '0')) {
+                    //     input.value = 1; 
+                    // }
                     
                 } else {
                     controls.style.display = 'none';
