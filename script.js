@@ -291,7 +291,7 @@ function resetSingleQuantity(inputId, type) {
     }
 }
 
-// ★★★ 修正: 合計金額とクーポンの表示を統合 ★★★
+// ★★★ 修正: クーポン計算ロジックを変更（AND条件） ★★★
 function updateSaleTotalDisplay() {
     const totalDisplay = document.getElementById('sale-total-display');
     const saleQtyInputs = document.querySelectorAll('input[id^="qty-sale-"]'); 
@@ -329,11 +329,10 @@ function updateSaleTotalDisplay() {
         }
     });
 
-    // クーポン枚数の計算 (10個ごとに1枚)
-    const foodCoupons = Math.floor(foodQty / 10);
-    const drinkCoupons = Math.floor(drinkQty / 10);
-    const jointCoupons = Math.floor(jointQty / 10);
-    const totalCoupons = foodCoupons + drinkCoupons + jointCoupons;
+    // ★修正: クーポン枚数の計算 (食べ物、飲み物、ジョイントの最小値/10)
+    const minQty = Math.min(foodQty, drinkQty, jointQty);
+    const totalCoupons = Math.floor(minQty / 10);
+    
     
     // 表示用HTMLを生成し、一つの要素に挿入
     let htmlContent = `
