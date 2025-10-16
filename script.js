@@ -210,11 +210,8 @@ function renderItemLists() {
                     controls.style.display = 'block';
                     if (card) card.classList.add('is-checked'); 
                     
-                    // ★修正: チェック時の自動 '1' 設定を削除
-                    const input = document.getElementById(`qty-${idPrefix}-${productId}`);
-                    if (idPrefix === 'sale' && input && (parseInt(input.value) === 0 || input.value === '0')) {
-                        input.value = 1; // 販売記録は最小値1を設定
-                    }
+                    // ★修正: 販売記録でも、チェック時に自動で1を設定するロジックを削除
+                    // 数量は0のまま維持されます
                     
                 } else {
                     controls.style.display = 'none';
@@ -254,10 +251,10 @@ function updateQuantity(inputId, value, type) {
         newValue = 0;
     }
     
-    // 販売記録は最小値1をチェック (ボタン操作時)
-    if (type === 'sale' && newValue === 0 && currentValue > 0) {
-        newValue = 1; // 1より小さくならないように
-    }
+    // ★修正: 販売記録でも、ボタン操作で1より小さくならないようにする制約を削除
+    // if (type === 'sale' && newValue === 0 && currentValue > 0) {
+    //     newValue = 1; 
+    // }
     
     input.value = newValue;
     
@@ -291,7 +288,7 @@ function resetSingleQuantity(inputId, type) {
     }
 }
 
-// ★★★ 修正: クーポン計算ロジックをAND条件に変更 ★★★
+// 販売記録の合計金額とクーポンの計算/表示
 function updateSaleTotalDisplay() {
     const totalDisplay = document.getElementById('sale-total-display');
     const saleQtyInputs = document.querySelectorAll('input[id^="qty-sale-"]'); 
@@ -329,7 +326,7 @@ function updateSaleTotalDisplay() {
         }
     });
 
-    // ★修正: クーポン枚数の計算 (食べ物、飲み物、ジョイントの最小値/10)
+    // クーポン枚数の計算 (食べ物、飲み物、ジョイントの最小値/10)
     const minQty = Math.min(foodQty, drinkQty, jointQty);
     
     // 最小値を10で割って、セットが成立した回数を算出
@@ -355,7 +352,6 @@ function updateSaleTotalDisplay() {
     
     totalDisplay.innerHTML = htmlContent;
 }
-// ★★★ 修正ここまで ★★★
 
 
 // --- ページロード時の自動ログインチェック処理 ---
