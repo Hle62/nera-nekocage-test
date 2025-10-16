@@ -110,7 +110,7 @@ async function fetchProductData() {
     }
 }
 
-// ★★★ 修正: 在庫補充のカテゴリヘッダーに価格を含めないようにする ★★★
+// ★修正: 数量のデフォルト値は 0 のまま。チェック時の自動 '1' 設定を削除。
 function renderItemLists() {
     const stockListDiv = document.getElementById('stock-item-list');
     const saleListDiv = document.getElementById('sale-item-list');
@@ -178,6 +178,7 @@ function renderItemLists() {
                         <input type="checkbox" id="sale-${productId}" name="sale_item" value="${product.name}" data-price="${product.price}">
                         <label for="sale-${productId}" class="item-name-label">${product.name}</label>
                     </div>
+                    
                     <div id="sale-qty-controls-${productId}" class="quantity-controls" style="display: none;">
                         <label for="qty-sale-${productId}" style="margin-top: 5px;">数量</label>
                         <input type="number" id="qty-sale-${productId}" min="0" value="0" data-item-id="${productId}">
@@ -209,11 +210,7 @@ function renderItemLists() {
                     controls.style.display = 'block';
                     if (card) card.classList.add('is-checked'); 
                     
-                    const input = document.getElementById(`qty-${idPrefix}-${productId}`);
-                    // チェック時は数量を1にする（利便性向上のため）
-                    if (input && parseInt(input.value) === 0) {
-                        input.value = 1;
-                    }
+                    // ★修正: チェック時の自動 '1' 設定を削除
                 } else {
                     controls.style.display = 'none';
                     if (card) card.classList.remove('is-checked');
@@ -240,7 +237,6 @@ function renderItemLists() {
 
     updateSaleTotalDisplay();
 }
-// ★★★ 修正ここまで ★★★
 
 // 数量ボタンの処理関数
 function updateQuantity(inputId, value, type) {

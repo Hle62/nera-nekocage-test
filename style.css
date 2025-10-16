@@ -26,7 +26,7 @@ h1 {
     margin-bottom: 25px;
     font-size: 1.8em;
 }
-/* ★変更: カテゴリヘッダーとフォームタイトル */
+
 h2 {
     color: #4F3F3F;
     border-left: 5px solid #F08080;
@@ -34,7 +34,7 @@ h2 {
     margin-bottom: 15px;
     font-size: 1.4em;
 }
-/* ★変更: カテゴリヘッダーの表示方法 */
+
 .category-header {
     display: flex; /* Flexboxで価格を右に寄せる */
     justify-content: space-between;
@@ -48,13 +48,11 @@ h2 {
     font-weight: bold; /* カテゴリ名を強調 */
 }
 
-/* ★変更: カテゴリヘッダー内の価格のスタイル */
 .category-price {
     font-size: 1.1em; /* カテゴリ名より少し大きく */
     font-weight: bold;
     color: #4F3F3F; /* 価格の色を落ち着いた色に */
 }
-/* ★変更ここまで */
 
 
 #login-section, #main-app {
@@ -190,6 +188,8 @@ button:hover {
     border: 1px solid #FFE8F0;
     transition: box-shadow 0.2s, border-color 0.2s, background-color 0.2s;
     cursor: pointer;
+    /* ★修正: カード内のテキストを中央揃えに */
+    text-align: center; 
 }
 
 /* チェックされた商品カードの視覚的強調 */
@@ -199,10 +199,11 @@ button:hover {
     background-color: #FFF9FC; /* やや薄い背景色 */
 }
 
-/* チェックボックスと名前を一行に */
+/* ★修正: チェックボックスと名前を一行に（中央配置） */
 .item-checkbox-row {
     display: flex;
     align-items: center;
+    justify-content: center; /* コンテンツ全体を中央揃え */
     margin-bottom: 5px;
 }
 .item-checkbox-row input[type="checkbox"] {
@@ -211,13 +212,14 @@ button:hover {
     flex-shrink: 0; 
 }
 .item-name-label {
-    flex-grow: 1; 
+    /* flex-grow: 1; を削除 */
     font-weight: bold !important; 
     color: #4F3F3F !important;
     line-height: 1.2;
+    margin: 0; /* ラベルの余白をリセット */
 }
 
-/* ★変更: 商品ごとの価格表示は非表示 */
+/* 商品ごとの価格表示は非表示 */
 .item-price {
     display: none;
 }
