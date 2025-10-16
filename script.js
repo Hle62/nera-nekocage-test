@@ -173,7 +173,7 @@ function renderItemLists() {
             
             // 2. 販売記録リスト (sale)
             const saleHtml = `
-                <div class="item-card" data-type="sale" data-id="${productId}">
+                <div class="item-card" data-type="sale" data-id="${productId}" data-category="${category}">
                     <div class="item-checkbox-row">
                         <input type="checkbox" id="sale-${productId}" name="sale_item" value="${product.name}" data-price="${product.price}">
                         <label for="sale-${productId}" class="item-name-label">${product.name}</label>
@@ -291,13 +291,12 @@ function resetSingleQuantity(inputId, type) {
     }
 }
 
-// 販売記録の合計金額とクーポンの計算/表示
+// ★★★ 修正: 合計金額とクーポンの表示を統合 ★★★
 function updateSaleTotalDisplay() {
     const totalDisplay = document.getElementById('sale-total-display');
     const saleQtyInputs = document.querySelectorAll('input[id^="qty-sale-"]'); 
     let totalSales = 0;
     
-    // ★クーポン計算用変数
     let foodQty = 0;
     let drinkQty = 0;
     let jointQty = 0;
@@ -319,7 +318,7 @@ function updateSaleTotalDisplay() {
                 totalSales += quantity * unitPrice;
             }
             
-            // ★カテゴリごとの数量を合算 (クーポン対象カテゴリのみ)
+            // カテゴリごとの数量を合算 (クーポン対象カテゴリのみ)
             if (category === '食べ物') {
                 foodQty += quantity;
             } else if (category === '飲み物') {
@@ -330,27 +329,32 @@ function updateSaleTotalDisplay() {
         }
     });
 
-    // ★クーポン枚数の計算 (10個ごとに1枚)
+    // クーポン枚数の計算 (10個ごとに1枚)
     const foodCoupons = Math.floor(foodQty / 10);
     const drinkCoupons = Math.floor(drinkQty / 10);
     const jointCoupons = Math.floor(jointQty / 10);
     const totalCoupons = foodCoupons + drinkCoupons + jointCoupons;
     
-    // 合計金額の表示を更新
-    totalDisplay.textContent = `合計金額 ¥${totalSales.toLocaleString()}`;
+    // 表示用HTMLを生成し、一つの要素に挿入
+    let htmlContent = `
+        <div class="sale-total-row">
+            <span class="label">合計金額</span>
+            <span class="value">¥${totalSales.toLocaleString()}</span>
+        </div>
+    `;
 
-    // ★クーポン表示の更新
-    const couponDisplayEl = document.getElementById('coupon-display');
-    const currentCouponsEl = document.getElementById('current-coupons');
-    
-    currentCouponsEl.textContent = totalCoupons.toLocaleString();
-    
     if (totalCoupons > 0) {
-        couponDisplayEl.style.display = 'block';
-    } else {
-        couponDisplayEl.style.display = 'none';
+        htmlContent += `
+            <div class="coupon-row">
+                <span class="label">付与クーポン券枚数</span>
+                <span class="value coupon-value">${totalCoupons.toLocaleString()} 枚</span>
+            </div>
+        `;
     }
+    
+    totalDisplay.innerHTML = htmlContent;
 }
+// ★★★ 修正ここまで ★★★
 
 
 // --- ページロード時の自動ログインチェック処理 ---
