@@ -26,7 +26,7 @@ h1 {
     margin-bottom: 25px;
     font-size: 1.8em;
 }
-
+/* ★変更: カテゴリヘッダーとフォームタイトル */
 h2 {
     color: #4F3F3F;
     border-left: 5px solid #F08080;
@@ -34,8 +34,7 @@ h2 {
     margin-bottom: 15px;
     font-size: 1.4em;
 }
-
-/* ★変更: カテゴリヘッダーの表示方法を変更 */
+/* ★変更: カテゴリヘッダーの表示方法 */
 .category-header {
     display: flex; /* Flexboxで価格を右に寄せる */
     justify-content: space-between;
@@ -218,7 +217,7 @@ button:hover {
     line-height: 1.2;
 }
 
-/* ★変更: 商品ごとの価格表示は不要になったため非表示にする */
+/* ★変更: 商品ごとの価格表示は非表示 */
 .item-price {
     display: none;
 }

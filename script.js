@@ -110,7 +110,7 @@ async function fetchProductData() {
     }
 }
 
-// ★★★ 変更: カテゴリヘッダーに価格を表示し、商品ごとの価格表示を削除 ★★★
+// ★★★ 修正: 在庫補充のカテゴリヘッダーに価格を含めないようにする ★★★
 function renderItemLists() {
     const stockListDiv = document.getElementById('stock-item-list');
     const saleListDiv = document.getElementById('sale-item-list');
@@ -124,14 +124,17 @@ function renderItemLists() {
         const products = productList[category];
         if (products.length === 0) return; // 商品がないカテゴリはスキップ
 
-        // そのカテゴリの統一価格を取得
+        // そのカテゴリの統一価格を取得 (販売記録用)
         const unifiedPrice = products[0].price; 
         const priceDisplay = unifiedPrice > 0 ? `<span class="category-price"> (¥${unifiedPrice.toLocaleString()})</span>` : '';
 
-        // カテゴリヘッダーに価格を含める
-        const categoryHeaderHtml = `<h3 class="category-header">${category}${priceDisplay}</h3>`;
-        stockListDiv.insertAdjacentHTML('beforeend', categoryHeaderHtml);
-        saleListDiv.insertAdjacentHTML('beforeend', categoryHeaderHtml);
+        // 1. 在庫補充のカテゴリヘッダー（価格なし）
+        const stockHeaderHtml = `<h3 class="category-header">${category}</h3>`;
+        stockListDiv.insertAdjacentHTML('beforeend', stockHeaderHtml);
+        
+        // 2. 販売記録のカテゴリヘッダー（価格あり）
+        const saleHeaderHtml = `<h3 class="category-header">${category}${priceDisplay}</h3>`;
+        saleListDiv.insertAdjacentHTML('beforeend', saleHeaderHtml);
 
         // グリッドコンテナを追加
         const stockGridHtml = `<div id="stock-grid-${category}" class="item-grid"></div>`;
@@ -146,7 +149,7 @@ function renderItemLists() {
         products.forEach(product => {
             const productId = product.id;
             
-            // 1. 在庫補充リスト (stock) - 商品ごとの価格表示はなし
+            // 1. 在庫補充リスト (stock)
             const stockHtml = `
                 <div class="item-card" data-type="stock" data-id="${productId}">
                     <div class="item-checkbox-row">
@@ -168,7 +171,7 @@ function renderItemLists() {
             `;
             stockGridDiv.insertAdjacentHTML('beforeend', stockHtml);
             
-            // 2. 販売記録リスト (sale) - 商品ごとの価格表示を削除
+            // 2. 販売記録リスト (sale)
             const saleHtml = `
                 <div class="item-card" data-type="sale" data-id="${productId}">
                     <div class="item-checkbox-row">
@@ -237,7 +240,7 @@ function renderItemLists() {
 
     updateSaleTotalDisplay();
 }
-// ★★★ 変更ここまで ★★★
+// ★★★ 修正ここまで ★★★
 
 // 数量ボタンの処理関数
 function updateQuantity(inputId, value, type) {
