@@ -26,6 +26,25 @@ h1 {
     margin-bottom: 25px;
     font-size: 1.8em;
 }
+/* ★新規追加: カテゴリヘッダーとフォームタイトル */
+h2 {
+    color: #4F3F3F;
+    border-left: 5px solid #F08080;
+    padding-left: 10px;
+    margin-bottom: 15px;
+    font-size: 1.4em;
+}
+.category-header {
+    color: #F08080;
+    font-size: 1.2em;
+    border-bottom: 2px solid #FFE8F0;
+    padding-bottom: 5px;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+/* ★新規追加ここまで */
+
+
 #login-section, #main-app {
     padding: 10px;
 }
@@ -94,9 +113,6 @@ button:hover {
     padding: 15px 0;
     border-top: 0;
 }
-/* --- 数量コントロール（元々の設定はここでは使用しません） --- */
-/* .quantity-controls input[type="number"] { ... } */
-/* ... */
 
 
 /* --- 認証情報エリア --- */
@@ -140,7 +156,7 @@ button:hover {
 
 
 /* ========================================================== */
-/* ★★★ NEW: グリッドレイアウト用CSS ★★★ */
+/* ★★★ グリッドレイアウト用CSS (変更なし) ★★★ */
 /* ========================================================== */
 
 /* グリッドコンテナ */
@@ -150,6 +166,7 @@ button:hover {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
     gap: 15px; /* カード間の間隔 */
     margin-top: 10px;
+    margin-bottom: 30px; /* カテゴリ間のスペースを確保 */
 }
 
 /* 個別の商品カード */
@@ -179,12 +196,11 @@ button:hover {
 .item-checkbox-row input[type="checkbox"] {
     transform: scale(1.2); 
     margin-right: 10px;
-    /* width: auto !important; は不要 */
-    flex-shrink: 0; /* チェックボックスが縮まないように */
+    flex-shrink: 0; 
 }
 .item-name-label {
-    flex-grow: 1; /* ラベルが残りのスペースを埋める */
-    font-weight: bold !important; /* 商品名を強調 */
+    flex-grow: 1; 
+    font-weight: bold !important; 
     color: #4F3F3F !important;
     line-height: 1.2;
 }
@@ -202,10 +218,10 @@ button:hover {
 
 /* 数量コントロール (グリッド内に最適化) */
 .item-card .quantity-controls {
-    margin-left: 0 !important; /* インデントをリセット */
+    margin-left: 0 !important; 
     margin-top: 10px !important;
     padding-top: 10px;
-    border-top: 1px dashed #A59393; /* 少し濃い点線 */
+    border-top: 1px dashed #A59393; 
 }
 .item-card .quantity-controls label {
     display: block;
@@ -213,7 +229,7 @@ button:hover {
     margin-bottom: 5px;
 }
 .item-card .quantity-controls input[type="number"] {
-    width: 100%; /* 幅をカードいっぱいに */
+    width: 100%; 
     margin-bottom: 10px;
     text-align: center;
 }
@@ -224,7 +240,7 @@ button:hover {
     justify-content: space-between;
 }
 .qty-buttons button {
-    flex-grow: 1; /* ボタンを均等に配置 */
+    flex-grow: 1; 
     min-width: 40px;
     padding: 6px 5px;
     margin: 0;
