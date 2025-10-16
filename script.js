@@ -5,7 +5,7 @@ const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwiUs6R03_OEYMQ
 // ★ 2. 【設定必須】販売記録に適用する一律の商品単価をここに設定してください
 // const SALE_UNIT_PRICE = 300; // 個別の商品価格を反映するため、この定数は使用しません。
 
-// ★★★ 変更: productList はカテゴリごとのオブジェクト構造になります ★★★
+// ★変更: productList はカテゴリごとのオブジェクト構造になります
 let productList = {}; // { '食べ物': [{name: '...', price: 100, id: '...'}], ... }
 // ----------------------------------
 
@@ -86,12 +86,15 @@ async function fetchProductData() {
         let idCounter = 0;
         productList = {};
         for (const categoryName in fullProductListByCategory) {
-            productList[categoryName] = fullProductListByCategory[categoryName].map(p => ({
-                category: p.category,
-                name: p.name,
-                price: p.price,
-                id: `item-${idCounter++}` 
-            }));
+            // Nullまたは空配列のカテゴリをスキップ
+            if (fullProductListByCategory[categoryName] && fullProductListByCategory[categoryName].length > 0) {
+                 productList[categoryName] = fullProductListByCategory[categoryName].map(p => ({
+                    category: p.category,
+                    name: p.name,
+                    price: p.price,
+                    id: `item-${idCounter++}` 
+                }));
+            }
         }
         
         // DOM構築の実行
@@ -106,7 +109,7 @@ async function fetchProductData() {
     }
 }
 
-// ★★★ 変更: チェックボックスと数量フィールドをカテゴリごとに生成する関数 ★★★
+// ★変更: チェックボックスと数量フィールドをカテゴリごとに生成する関数
 function renderItemLists() {
     const stockListDiv = document.getElementById('stock-item-list');
     const saleListDiv = document.getElementById('sale-item-list');
@@ -201,6 +204,7 @@ function renderItemLists() {
                     if (card) card.classList.add('is-checked'); 
                     
                     const input = document.getElementById(`qty-${idPrefix}-${productId}`);
+                    // チェック時は数量を1にする（利便性向上のため）
                     if (input && parseInt(input.value) === 0) {
                         input.value = 1;
                     }
@@ -208,6 +212,7 @@ function renderItemLists() {
                     controls.style.display = 'none';
                     if (card) card.classList.remove('is-checked');
                     
+                    // チェックを外したら数量を0に戻す
                     const input = document.getElementById(`qty-${idPrefix}-${productId}`);
                     if (input) {
                         input.value = 0;
@@ -229,7 +234,7 @@ function renderItemLists() {
 
     updateSaleTotalDisplay();
 }
-// ★★★ 変更ここまで ★★★
+// ★変更ここまで
 
 // 数量ボタンの処理関数
 function updateQuantity(inputId, value, type) {
@@ -280,20 +285,18 @@ function resetSingleQuantity(inputId, type) {
 // 販売記録の合計金額をリアルタイムで更新する関数
 function updateSaleTotalDisplay() {
     const totalDisplay = document.getElementById('sale-total-display');
-    // 全ての販売数量入力フィールドを取得
     const saleQtyInputs = document.querySelectorAll('input[id^="qty-sale-"]'); 
     let totalSales = 0;
     
     saleQtyInputs.forEach(input => {
         const quantity = parseInt(input.value) || 0;
         
-        // 関連するチェックボックスのIDを生成
         const parts = input.id.split('-');
         const productId = parts.slice(2).join('-'); 
         const checkbox = document.getElementById(`sale-${productId}`);
         
-        // チェックが入っていて、数量が正の場合のみ加算
         if (checkbox && checkbox.checked && quantity > 0) {
+            // チェックボックスのデータ属性から価格を取得
             const unitPrice = parseFloat(checkbox.dataset.price);
             if (!isNaN(unitPrice)) {
                 totalSales += quantity * unitPrice;
