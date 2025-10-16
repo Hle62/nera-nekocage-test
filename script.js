@@ -526,6 +526,27 @@ async function submitData(event, type) {
             throw e;
         }
         
+        // ★修正箇所: 在庫補充のプレサブリミットリセットをここに移動
+        // 販売記録と同様に、送信ボタンを押した瞬間にリセットする
+        const items = form.querySelectorAll('input[name$="_item"]'); 
+        items.forEach(item => {
+            item.checked = false; 
+            const parts = item.id.split('-');
+            const idPrefix = parts[0]; 
+            const productId = parts.slice(1).join('-'); 
+            
+            const controls = document.getElementById(`${idPrefix}-qty-controls-${productId}`);
+            if (controls) {
+                controls.style.display = 'none'; // 数量入力欄全体を非表示にする
+            }
+            const input = document.getElementById(`qty-${idPrefix}-${productId}`);
+            if (input) input.value = 0; 
+
+            const card = item.closest('.item-card');
+            if (card) card.classList.remove('is-checked');
+        });
+        form.reset(); // Memo fieldもクリア
+
     } else if (type === '経費申請') {
         const memo = form.querySelector('#memo-expense').value;
 
@@ -598,8 +619,9 @@ async function submitData(event, type) {
             const card = item.closest('.item-card');
             if (card) card.classList.remove('is-checked');
         });
-        form.reset();
+        form.reset(); // Memo fieldもクリア
         updateSaleTotalDisplay(); // 表示もリセット
+
     } else {
         alert('無効なフォームです。');
         submitButton.textContent = originalButtonText;
@@ -624,28 +646,11 @@ async function submitData(event, type) {
         if (result.result === 'success') {
             alert(`${type}のデータ ${records.length} 件が正常に送信され、Discordに通知されました！`);
             
-            // ★修正箇所: 在庫補充送信成功後のリセット処理
-            if (type === '在庫補充') {
-                const items = form.querySelectorAll('input[name$="_item"]'); 
-                items.forEach(item => {
-                    item.checked = false; 
-                    const parts = item.id.split('-');
-                    const idPrefix = parts[0]; 
-                    const productId = parts.slice(1).join('-'); 
-                    
-                    const controls = document.getElementById(`${idPrefix}-qty-controls-${productId}`);
-                    if (controls) {
-                        controls.style.display = 'none'; // 数量入力欄全体を非表示にする
-                    }
-                    const input = document.getElementById(`qty-${idPrefix}-${productId}`);
-                    if (input) input.value = 0; 
-
-                    const card = item.closest('.item-card');
-                    if (card) card.classList.remove('is-checked');
-                });
+            // 在庫補充/販売記録はボタン押下時にリセット済み。
+            // 経費申請のみ、成功時にform.reset()を実行する。
+            if (type === '経費申請') {
+                form.reset();
             }
-            
-            form.reset();
         } else if (result.result === 'error') {
             alert(`送信エラーが発生しました (GASエラー): ${result.message}`);
         } else {
